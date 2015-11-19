@@ -9,55 +9,38 @@ __lua__
 --------------------
 screen = {x=0, y=0, w=127, h=127}
 color = {black = 0, red = 8, blue = 12, yellow = 10, green = 11, grey = 6, pink = 14, white=7}
-ball_1 = {x=64, y=64, size=2, x_dir=0, y_dir=0, color=color.red}
-ball_2 = {x=64, y=64, size=2, x_dir=0, y_dir=0, color=color.green}
-ball_3 = {x=64, y=64, size=2, x_dir=0, y_dir=0, color=color.blue}
-sprite = {frame = 0, x = 10, y = 10, flip = false}
+
+balls = {}
+
+sprite_1 = {frame = 0, x = 10, y = 10, flip = false}
+sprite_2 = {frame = 1, x = 10, y = 10, flip = false}
+sprite_3 = {frame = 2, x = 10, y = 10, flip = false}
+sprite_4 = {frame = 3, x = 10, y = 10, flip = false}
+sprite_5 = {frame = 4, x = 10, y = 10, flip = false}
+
+sprites = {sprite_1, sprite_2, sprite_3, sprite_4, sprite_5}
+
 sound = {bounce=0}
 
 --------------------
 -- main funcs
 --------------------
 function _init()
-	ball_1.x_dir = 1
-	ball_1.y_dir = 2
-
-	ball_2.x_dir = 3
-	ball_2.y_dir = 4
-
-	ball_3.x_dir = 3
-	ball_3.y_dir = 1
+	
+	-- populate balls array
+	for i = 1, 200 do 
+    add(balls,{x=rnd(127), y=rnd(127), size=2, x_dir=(rnd(8)-4), y_dir=(rnd(8)-4), color=rnd(15)})
+ end
+ 
 end
 
 function _update()
-  move_ball(ball_1)
-  collide(ball_1)
-
-  move_ball(ball_2)
-  collide(ball_2)
-
-  move_ball(ball_3)
-  collide(ball_3)
-
-  sprite.frame += 1
   
-  if sprite.flip == false then
-  sprite.x += 1
-    if sprite.x > 120 then
-    sprite.flip = true
-    end
+  for i = 1, count(balls) do 
+    move_ball(balls[i])
+    collide(balls[i])
   end
-   
-  if sprite.flip == true then
-  sprite.x -= 1
-    if sprite.x < 1 then
-    sprite.flip = false
-    end
-  end
-  
-  if sprite.frame == 3 then
-    sprite.frame = 0
-  end
+
 end
 
 function _draw()
@@ -65,15 +48,13 @@ function _draw()
 	camera(0,0)
 	rectfill(screen.x, screen.y, screen.x+screen.w, screen.y+screen.h, color.black)
 
-	-- ball
-	draw_ball(ball_1)
-	draw_ball(ball_2)
-	draw_ball(ball_3)
-
-  -- sprite
-  draw_sprite(sprite)
-
+	-- balls
+	for i = 1, count(balls) do 
+    draw_ball(balls[i])
+ end
+	
 	-- text
+	print("hello world", 2, 2, rnd(15))
 	print("hello world", 1, 1, color.white)
 end
 
@@ -82,8 +63,9 @@ end
 --------------------
 
 function draw_sprite(_sprite)
-  spr(_sprite.frame, _sprite.x, _sprite.y, 1, 1, _sprite.flip)
+ spr(_sprite.frame, _sprite.x, _sprite.y, 1, 1, _sprite.flip)
 end
+
 function draw_ball(_ball)
 	circfill(_ball.x, _ball.y, _ball.size, _ball.color)
 end
@@ -100,25 +82,21 @@ function collide(_ball)
   --top
   if (_ball.y - _ball.size) < (screen.y) then
     _ball.y_dir = -_ball.y_dir
-    sfx(sound.bounce)
   end
  
   --bottom
   if (_ball.y + _ball.size) > (screen.y + screen.h) then
     _ball.y_dir = -_ball.y_dir
-    sfx(sound.bounce)
   end
 
   --left
   if (_ball.x - _ball.size) < (screen.x) then
     _ball.x_dir = -_ball.x_dir
-    sfx(sound.bounce)
   end
 
   --right
   if (_ball.x + _ball.size) > (screen.x + screen.w) then
     _ball.x_dir = -_ball.x_dir
-    sfx(sound.bounce)
   end
 end
 
