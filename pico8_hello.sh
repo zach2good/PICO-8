@@ -1,1 +1,0 @@
-bin/pico8 -run hello.p8
