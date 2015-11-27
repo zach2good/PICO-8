@@ -22,7 +22,7 @@ sprite_7 = {frame = 12, x_size = 2, y_size = 3}
 
 -- global time
 start_time = time()
-
+last_input = time()
 -- timers
 anim = 0
 
@@ -37,7 +37,7 @@ t = 0
 -- main funcs
 --------------------
 function _init()
- 	music(0, 1)
+
 end
 
 function _update()
@@ -45,21 +45,24 @@ function _update()
 	t += 1
 
 -- inputs
+player_1.dx *= 0.9
+
+	if (time() - last_input) > 0.2 then
 	if btn(0) then -- l
 		last_input = time()	
-		player_1.dx -= 1
+		player_1.dx -= 3
 		player_1.flip = true		
 	end
 
 	if btn(1) then -- r
 		last_input = time()
-		player_1.dx += 1
+		player_1.dx += 3
 		player_1.flip = false
 	end
 		
 	if btn(2) then -- u
 		last_input = time()
-		player_1.dy -= 5 -- jump
+		player_1.dy -= 15 -- jump
 		player_1.ground = false
 		sfx(0)		
 	end
@@ -67,6 +70,7 @@ function _update()
 	if btn(3) then -- d
 		last_input = time()		
 	end	
+	end
 	
 	-- gravity
 	 player_1.dy += 1
