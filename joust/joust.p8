@@ -33,6 +33,37 @@ player_2 = {x = 100, y = 100, dx = 0, dy = 0, flip = false}
 -- ticks
 t = 0
 
+-- input
+input = {}
+keyvalue = {}
+keytimestamp = {}
+
+for i = 0, 5 do keyvalue[i] = 0 end
+for i = 0, 5 do keytimestamp[i] = 1000 end
+
+function input.keypoll()
+	for item=0,5 do
+    if btn(item) then
+      if keyvalue[item] == 0 then keyvalue[item] = 2 else keyvalue[item] = 1 end
+      keytimestamp[item] = time()
+    else
+      if keyvalue[item] > 0 then keyvalue[item] = keyvalue[item] - 1 end
+    end
+  end
+end
+
+function input.justpressed(t)
+	return keyvalue[t] == 2 and true or false
+end
+
+function input.pressed(t)
+	return keyvalue[t] > 0 and true or false
+end
+
+function input.timelastpressed(t)
+	return keytimestamp[t]
+end
+
 --------------------
 -- main funcs
 --------------------
@@ -41,36 +72,41 @@ function _init()
 end
 
 function _update()
--- tick
+	-- tick
 	t += 1
 
--- inputs
-player_1.dx *= 0.9
+	-- inputs
+	input.keypoll()
 
-	if (time() - last_input) > 0.2 then
-	if btn(0) then -- l
-		last_input = time()	
+	player_1.dx *= 0.9
+
+	if input.justpressed(0) then -- l
 		player_1.dx -= 3
 		player_1.flip = true		
 	end
 
-	if btn(1) then -- r
-		last_input = time()
+	if input.justpressed(1) then -- r
 		player_1.dx += 3
 		player_1.flip = false
 	end
 		
-	if btn(2) then -- u
-		last_input = time()
+	if input.justpressed(2) then -- u
 		player_1.dy -= 15 -- jump
 		player_1.ground = false
 		sfx(0)		
 	end
 
-	if btn(3) then -- d
-		last_input = time()		
+	if input.justpressed(3) then -- d
+	
 	end	
-	end
+
+	if input.justpressed(4) then
+	
+	end	
+
+	if input.justpressed(5) then
+	
+	end	
 	
 	-- gravity
 	 player_1.dy += 1
