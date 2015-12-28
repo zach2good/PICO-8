@@ -27,8 +27,8 @@ last_input = time()
 anim = 0
 
 -- actors
-player_1 = {x = 100, y = 100, dx = 0, dy = 0, flip = false, ground = false}
-player_2 = {x = 100, y = 100, dx = 0, dy = 0, flip = false}
+player_1 = {x = 30, y = 100, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
+player_2 = {x = 100, y = 100, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
 
 -- ticks
 t = 0
@@ -78,8 +78,7 @@ function _update()
 	-- inputs
 	input.keypoll()
 
-	player_1.dx *= 0.9
-
+	-- handle inputs
 	if input.justpressed(0) then -- l
 		player_1.dx -= 3
 		player_1.flip = true		
@@ -107,27 +106,11 @@ function _update()
 	if input.justpressed(5) then
 	
 	end	
-	
-	-- gravity
-	 player_1.dy += 1
-	 
-	-- clamp velocitys
-	clamp(player_1.dx, 0, -2)
-	clamp(player_1.dy, 0, -1)
-	
-	-- velocity
-	player_1.x += player_1.dx
-	player_1.y += player_1.dy
-	
-	-- degrade
-	player_1.dx *= 0.9
-	player_1.dy *= 0.9
-	
-	-- bounds
-	if player_1.y > 100 then
-		player_1.y = 100
-		player_1.ground = true
-	end
+
+	-- logic
+	gravity(player_1)
+	movement(player_1)
+	bounds(player_1)
 	
 end
 
@@ -163,7 +146,48 @@ end
 --------------------
 -- game funcs
 --------------------
+function movement(target)
+	target.x += target.dx
+	target.y += target.dy
+	
+	target.dx *= 0.9
+	target.dy *= 0.9
 
+	target.dx += target.dx2
+	target.dy += target.dy2
+
+	clamp(target.dx, 0, -2)
+	clamp(target.dy, 0, -1)
+
+	target.dx2 = 0
+	target.dy2 = 0
+end
+
+
+function gravity(target)
+	target.dy2 += 1
+end
+
+
+function bounds(target)
+
+	if target.y > 110 then
+		target.y = 110
+	end
+
+	if target.y < 0 then
+		target.y = 0
+	end
+
+	if target.x > 120 then
+		target.x = 120
+	end
+
+	if target.x < 0 then
+		target.x = 0
+	end
+
+end
 
 --------------------
 -- utils
