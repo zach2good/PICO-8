@@ -79,18 +79,19 @@ function _update()
 	input.keypoll()
 
 	-- handle inputs
+
+	-- impulse
+
 	if input.justpressed(0) then -- l
-		player_1.dx -= 3
-		player_1.flip = true		
+			
 	end
 
 	if input.justpressed(1) then -- r
-		player_1.dx += 3
-		player_1.flip = false
+		
 	end
 		
 	if input.justpressed(2) then -- u
-		player_1.dy -= 15 -- jump
+		player_1.dy2 -= 15 -- jump
 		player_1.ground = false
 		sfx(0)		
 	end
@@ -106,6 +107,33 @@ function _update()
 	if input.justpressed(5) then
 	
 	end	
+
+	--held buttons
+	if input.pressed(0) then
+		player_1.dx2 = -1.5
+		player_1.flip = true	
+	end
+
+	if input.pressed(1) then
+		player_1.dx2 = 1.5
+		player_1.flip = false
+	end
+
+	if input.pressed(2) then
+
+	end
+
+	if input.pressed(3) then
+
+	end
+
+	if input.pressed(4) then
+
+	end
+
+	if input.pressed(5) then
+
+	end
 
 	-- logic
 	gravity(player_1)
@@ -138,9 +166,11 @@ function _draw()
 	-- animations
 	if player_1.ground then
 		spr(anim, player_1.x, player_1.y, 2, 3, player_1.flip, false)
+	elseif input.justpressed(2) then
+		spr(12, player_1.x, player_1.y, 2, 3, player_1.flip, false)
 	else
 		spr(10, player_1.x, player_1.y, 2, 3, player_1.flip, false)
-	end
+end
 end
 
 --------------------
@@ -165,7 +195,7 @@ end
 
 
 function gravity(target)
-	target.dy2 += 1
+	target.dy2 += 0.5
 end
 
 
