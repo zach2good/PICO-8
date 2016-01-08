@@ -27,8 +27,12 @@ last_input = time()
 anim = 0
 
 -- actors
-player_1 = {x = 30, y = 100, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
-player_2 = {x = 100, y = 100, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
+player_1 = {x = 30, y = 100, w = 16, h = 24, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
+player_2 = {x = 100, y = 100, w = 16, h = 24, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
+
+floor_1 = {x = 30, y = 100, w = 3, h = 1}
+
+objects = { player_1, floor_1}
 
 -- ticks
 t = 0
@@ -75,7 +79,59 @@ function _update()
 	-- tick
 	t += 1
 
-	-- inputs
+	handle_input()
+
+	-- logic
+	gravity(player_1)
+	movement(player_1)
+	bounds(player_1)
+	
+end
+
+function _draw()
+	-- clear
+	camera(0,0)
+	rectfill(screen.x, screen.y, screen.x+screen.w, screen.y+screen.h, 0)
+	
+	-- text
+	print("pico-joust v0.1", 2, 2, 9)
+
+	-- box
+	rectfill(floor_1.x, floor_1.y, floor_1.x+floor_1.w, floor_1.y+floor_1.h, 1)
+
+	 if (collides(player_1, floor_1)) then
+	 	print("collide", 2, 10, 9)
+	 end
+
+	-- timers
+	if t == 5 then
+		anim += 2
+	end
+
+	if anim > 6 then
+		anim = 0
+	end
+
+	if t > 5 then
+		t = 0
+	end
+
+	-- animations
+	if player_1.ground then
+		spr(anim, player_1.x, player_1.y, 2, 3, player_1.flip, false)
+	elseif input.justpressed(2) then
+		spr(12, player_1.x, player_1.y, 2, 3, player_1.flip, false)
+	else
+		spr(10, player_1.x, player_1.y, 2, 3, player_1.flip, false)
+end
+end
+
+--------------------
+-- game funcs
+--------------------
+function handle_input()
+
+-- inputs
 	input.keypoll()
 
 	-- handle inputs
@@ -134,48 +190,9 @@ function _update()
 	if input.pressed(5) then
 
 	end
-
-	-- logic
-	gravity(player_1)
-	movement(player_1)
-	bounds(player_1)
 	
 end
 
-function _draw()
-	-- clear
-	camera(0,0)
-	rectfill(screen.x, screen.y, screen.x+screen.w, screen.y+screen.h, 0)
-	
-	-- text
-	print("pico-joust v0.1", 2, 2, 9)
-
-	-- timers
-	if t == 5 then
-		anim += 2
-	end
-
-	if anim > 6 then
-		anim = 0
-	end
-
-	if t > 5 then
-		t = 0
-	end
-
-	-- animations
-	if player_1.ground then
-		spr(anim, player_1.x, player_1.y, 2, 3, player_1.flip, false)
-	elseif input.justpressed(2) then
-		spr(12, player_1.x, player_1.y, 2, 3, player_1.flip, false)
-	else
-		spr(10, player_1.x, player_1.y, 2, 3, player_1.flip, false)
-end
-end
-
---------------------
--- game funcs
---------------------
 function movement(target)
 	target.x += target.dx
 	target.y += target.dy
@@ -216,6 +233,23 @@ function bounds(target)
 	if target.x < 0 then
 		target.x = 0
 	end
+
+end
+
+function collides(target_1, target_2)
+
+	if (target_1.x < target_2.x + target_2.w
+		and
+		target_1.x + target_1.w > target_2.x
+		and
+		target_1.y < target_2.y + target_2.h
+		and
+		target_1.y + target_1.h > target_2.y) 
+	then
+		return true
+	end
+
+	return false;
 
 end
 
