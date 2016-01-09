@@ -30,7 +30,7 @@ anim = 0
 player_1 = {x = 30, y = 100, w = 16, h = 24, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
 player_2 = {x = 100, y = 100, w = 16, h = 24, dx = 0, dy = 0, dx2 = 0, dy2 = 0, flip = false, ground = false}
 
-floor_1 = {x = 30, y = 100, w = 3, h = 1}
+floor_1 = {x = 70, y = 100, w = 3, h = 1}
 
 objects = { player_1, floor_1}
 
@@ -79,12 +79,17 @@ function _update()
 	-- tick
 	t += 1
 
+	-- input
 	handle_input()
 
 	-- logic
 	gravity(player_1)
 	movement(player_1)
 	bounds(player_1)
+
+	if (fight(player_1, floor_1)) then
+		floor_1.x += 10
+	end
 	
 end
 
@@ -99,9 +104,10 @@ function _draw()
 	-- box
 	rectfill(floor_1.x, floor_1.y, floor_1.x+floor_1.w, floor_1.y+floor_1.h, 1)
 
-	 if (collides(player_1, floor_1)) then
-	 	print("collide", 2, 10, 9)
-	 end
+	-- debug collide
+	if (collides(player_1, floor_1)) then
+		print("collide", 2, 10, 9)
+	end
 
 	-- timers
 	if t == 5 then
@@ -123,12 +129,20 @@ function _draw()
 		spr(12, player_1.x, player_1.y, 2, 3, player_1.flip, false)
 	else
 		spr(10, player_1.x, player_1.y, 2, 3, player_1.flip, false)
-end
+	end
 end
 
 --------------------
 -- game funcs
 --------------------
+function fight(target_1, target_2)
+	if (collides(target_1, target_2) and target_1.y < target_2.y) then
+		return true
+	end
+
+	return false
+end
+
 function handle_input()
 
 -- inputs
